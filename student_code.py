@@ -1,7 +1,7 @@
 def shortest_path(M,start,goal):
     # Initialize list and other variables
     frontier = set()
-    explored = set()
+    explored = []
     parent = {}
     point_gcost = {}
     point_hcost = {}
@@ -16,10 +16,11 @@ def shortest_path(M,start,goal):
     while frontier:
                 
         if current == goal:
-            return
+            explored.append(current)
+            return explored
         
         frontier.remove(current)  # remove best item
-        explored.add(current)  # add new
+        explored.append(current)  # add new
         
         for node in M.roads[current]:
             if node in explored:
@@ -31,21 +32,16 @@ def shortest_path(M,start,goal):
                 point_hcost[node] = hcost(M, node, goal)
                 parent[node] = current
                 frontier.add(node)
-                print(frontier)
                 
         # find minimum, update current
         minimum = None
         for node in frontier:
-            print(node)
             point_fcost[node] = point_gcost[node] + point_hcost[node]
-            print(point_fcost[node])
             
             if minimum is None or point_fcost[node] < point_fcost[minimum]:
                 minimum = node
-                print("MINIMUM")
-                print(minimum)
-                current = node
-            
+                
+        current = minimum
 
 def gcost(M, node1, node2):
     nodeone = M.intersections[node1]

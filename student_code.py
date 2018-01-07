@@ -6,24 +6,15 @@ def shortest_path(M,start,goal):
     point_gcost = {}
     point_hcost = {}
     point_fcost = {}
-    cost_list = []
     
     # Initialise current
     current = start
     frontier.add(current)
     point_gcost[current] = 0
-    point_hcost[current] = 0
-    point_fcost[current] = 0
-    lowestcost = current
+    point_fcost[current] = 2
  
     while frontier:
-        for node in frontier:
-            print(node)
-            point_fcost[node] = point_gcost[node] + point_hcost[node]
-            print(point_fcost[node])
-            if point_fcost[node] < point_fcost[lowestcost]:
-                lowestcost = node
-        
+                
         if current == goal:
             return
         
@@ -42,6 +33,19 @@ def shortest_path(M,start,goal):
                 frontier.add(node)
                 print(frontier)
                 
+        # find minimum, update current
+        minimum = None
+        for node in frontier:
+            print(node)
+            point_fcost[node] = point_gcost[node] + point_hcost[node]
+            print(point_fcost[node])
+            
+            if minimum is None or point_fcost[node] < point_fcost[minimum]:
+                minimum = node
+                print("MINIMUM")
+                print(minimum)
+                current = node
+            
 
 def gcost(M, node1, node2):
     nodeone = M.intersections[node1]

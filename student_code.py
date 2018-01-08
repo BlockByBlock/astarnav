@@ -12,12 +12,17 @@ def shortest_path(M,start,goal):
     frontier.add(current)
     point_gcost[current] = 0
     point_fcost[current] = 2
+    parent[current] = None
  
     while frontier:
                 
         if current == goal:
-            explored.append(current)
-            return explored
+            path = []
+            while parent[current]:
+                path.append(current)
+                current = parent[current]
+            path.append(current)
+            return path[::-1]
         
         frontier.remove(current)  # remove best item
         explored.append(current)  # add new
@@ -26,6 +31,10 @@ def shortest_path(M,start,goal):
             if node in explored:
                 continue
             if node in frontier:
+                new_gcost = point_gcost[current] + gcost(M, node, current)
+                if point_gcost[node] > new_gcost:
+                    point_gcost[node] = new_gcost
+                    parent[node] = current
                 break
             else:
                 point_gcost[node] = point_gcost[current] + gcost(M, node, current)

@@ -1,7 +1,7 @@
 def shortest_path(M,start,goal):
     # Initialize list and other variables
     frontier = set()
-    explored = []
+    explored = set()
     parent = {}
     point_gcost = {}
     point_hcost = {}
@@ -11,32 +11,38 @@ def shortest_path(M,start,goal):
     current = start
     frontier.add(current)
     point_gcost[current] = 0
-    point_fcost[current] = 2
+    point_fcost[current] = 2  # initialize based on initial neighbor fcost
     parent[current] = None
  
+    #while there is possible path in frontier
     while frontier:
-                
+        
+        # reach goal, trace path
         if current == goal:
             path = []
             while parent[current]:
                 path.append(current)
                 current = parent[current]
             path.append(current)
+            # invert path and return
             return path[::-1]
         
-        frontier.remove(current)  # remove best item
-        explored.append(current)  # add new
+        # reached and tested
+        frontier.remove(current)
+        explored.add(current)    
         
+        # neighbour checks
         for node in M.roads[current]:
             if node in explored:
                 continue
             if node in frontier:
                 new_gcost = point_gcost[current] + gcost(M, node, current)
+                # compare and update gcost 
                 if point_gcost[node] > new_gcost:
                     point_gcost[node] = new_gcost
                     parent[node] = current
-                break
             else:
+                # calculate gcost and hcost and parent
                 point_gcost[node] = point_gcost[current] + gcost(M, node, current)
                 point_hcost[node] = hcost(M, node, goal)
                 parent[node] = current
@@ -46,12 +52,12 @@ def shortest_path(M,start,goal):
         minimum = None
         for node in frontier:
             point_fcost[node] = point_gcost[node] + point_hcost[node]
-            
             if minimum is None or point_fcost[node] < point_fcost[minimum]:
                 minimum = node
                 
         current = minimum
 
+        
 def gcost(M, node1, node2):
     nodeone = M.intersections[node1]
     nodetwo = M.intersections[node2]

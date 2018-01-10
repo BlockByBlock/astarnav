@@ -1,3 +1,5 @@
+import math
+
 def shortest_path(M,start,goal):
     # Initialize list and other variables
     frontier = set()
@@ -16,6 +18,8 @@ def shortest_path(M,start,goal):
  
     #while there is possible path in frontier
     while frontier:
+
+        current = min(frontier, key=lambda x:point_fcost[x])
         
         # reach goal, trace path
         if current == goal:
@@ -40,30 +44,22 @@ def shortest_path(M,start,goal):
                 # compare and update gcost 
                 if point_gcost[node] > new_gcost:
                     point_gcost[node] = new_gcost
+                    point_fcost[node] = point_gcost[node] + point_hcost[node]
                     parent[node] = current
             else:
-                # calculate gcost and hcost and parent
+                # calculate fcost/gcost/hcost and parent
                 point_gcost[node] = point_gcost[current] + gcost(M, node, current)
                 point_hcost[node] = hcost(M, node, goal)
+                point_fcost[node] = point_gcost[node] + point_hcost[node]
                 parent[node] = current
                 frontier.add(node)
-                
-        # find minimum, update current
-        minimum = None
-        for node in frontier:
-            point_fcost[node] = point_gcost[node] + point_hcost[node]
-            if minimum is None or point_fcost[node] < point_fcost[minimum]:
-                minimum = node
-                
-        current = minimum
-
         
 def gcost(M, node1, node2):
     nodeone = M.intersections[node1]
     nodetwo = M.intersections[node2]
     a = abs(nodeone[0] - nodetwo[0]) 
     b = abs(nodeone[1] - nodetwo[1]) 
-    g_cost = a + b
+    g_cost = math.sqrt((a ** 2) + (b ** 2))
     return g_cost
                     
 def hcost(M, node, goal):
@@ -71,5 +67,5 @@ def hcost(M, node, goal):
     nodeone = M.intersections[node]
     x = abs(nodeone[0] - nodetwo[0])
     y = abs(nodeone[1] - nodetwo[1])
-    h_cost = x + y
+    h_cost = math.sqrt((x ** 2) + (y ** 2))
     return h_cost
